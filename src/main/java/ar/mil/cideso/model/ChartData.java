@@ -2,12 +2,12 @@ package ar.mil.cideso.model;
 
 import java.util.Objects;
 
-public class PieChartData {
+public class ChartData {
 
     private final String category;
     private final Long value;
 
-    public PieChartData(
+    public ChartData(
             String category,
             Long value) {
 
@@ -35,10 +35,10 @@ public class PieChartData {
                 || getClass() != object.getClass())
             return false;
 
-        PieChartData that = (PieChartData) object;
+        ChartData chartData = (ChartData) object;
         return Objects.equals(
                 category,
-                that.category);
+                chartData.category);
 
     }
 
@@ -46,4 +46,5 @@ public class PieChartData {
     public int hashCode() {
         return Objects.hash(value, category);
     }
+
 }
