@@ -3,7 +3,9 @@ import ar.mil.cideso.model.BarChartData;
 import ar.mil.cideso.model.ChartData;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.HashSet;
@@ -21,11 +23,16 @@ public class Test extends Application {
     public void start(
             Stage primaryStage) {
 
-        //StackPane stackPane = this.setPieChart();
-        StackPane stackPane = this.setBarChart();
+        VBox vBox = new VBox();
+
+        StackPane stackPanePieChart = this.setPieChart();
+        StackPane stackPaneBarChart = this.setBarChart();
+
+        vBox.getChildren().add(stackPanePieChart);
+        vBox.getChildren().add(stackPaneBarChart);
 
         primaryStage.setTitle("Charts Example");
-        primaryStage.setScene(new Scene(stackPane, 250, 150));
+        primaryStage.setScene(new Scene(vBox, 400, 650));
         primaryStage.show();
 
     }
