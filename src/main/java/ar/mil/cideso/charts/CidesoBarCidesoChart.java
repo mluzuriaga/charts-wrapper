@@ -1,48 +1,40 @@
-package ar.mil.cideso;
+package ar.mil.cideso.charts;
 
 import ar.mil.cideso.model.BarChartData;
-import ar.mil.cideso.model.ChartData;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.*;
+import javafx.scene.Node;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CidesoCharts {
+public class CidesoBarCidesoChart extends CidesoChart {
 
-    public PieChart getPieChart(
-            String title,
-            Set<ChartData> chartDataSet
+    private final Set<BarChartData> barChartDataSet;
+
+    public CidesoBarCidesoChart(
+            String chartTitle,
+            Set<BarChartData> barChartDataSet
     ) {
 
-        ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList();
-        for (ChartData chartData : chartDataSet)
-            observableList.add(
-                    new PieChart.Data(
-                            chartData.getCategory(),
-                            chartData.getValue()));
-
-        PieChart pieChart = new PieChart(observableList);
-        pieChart.setTitle(title);
-        return pieChart;
+        super(chartTitle);
+        this.barChartDataSet = barChartDataSet;
 
     }
 
-    public BarChart<String,Number> getBarChart(
-            String title,
-            Set<BarChartData> barChartDataSet
-    ) {
+    @Override
+    public Node getChart() {
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
 
-        final BarChart<String,Number> barChart = new BarChart<>(
+        final javafx.scene.chart.BarChart<String, Number> barChart = new javafx.scene.chart.BarChart<>(
                 xAxis,
                 yAxis);
 
-        barChart.setTitle(title);
+        barChart.setTitle(chartTitle);
 
         barChartDataSet.forEach(
                 barChartData -> {
@@ -63,7 +55,9 @@ public class CidesoCharts {
 
                 });
 
-        return barChart;
+        return wrapInCard(
+                chartTitle,
+                barChart);
 
     }
 
