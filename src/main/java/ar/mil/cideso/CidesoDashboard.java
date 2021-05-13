@@ -1,12 +1,10 @@
 package ar.mil.cideso;
 
-import ar.mil.cideso.charts.CidesoBarCidesoChart;
-import ar.mil.cideso.charts.CidesoGaugeChart;
-import ar.mil.cideso.charts.CidesoPieChart;
-import ar.mil.cideso.charts.CidesoSimpleNumberChart;
+import ar.mil.cideso.charts.*;
 import ar.mil.cideso.charts.external.SimpleSectionGauge;
 import ar.mil.cideso.model.BarChartData;
 import ar.mil.cideso.model.ChartData;
+import ar.mil.cideso.model.ChartTypeEnum;
 import eu.hansolo.medusa.Section;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -37,7 +35,27 @@ public class CidesoDashboard {
 
     }
 
-    public Node getPieChart(
+    public Node buildChart(
+            ChartTypeEnum chartType,
+            String chartTitle,
+            Set<ChartData> chartDataSet) {
+
+        switch (chartType) {
+
+            case BAR:
+                return this.getSimpleBarChart(chartTitle, chartDataSet);
+            case PIE:
+                return this.getPieChart(chartTitle, chartDataSet);
+            case SIMPLE_NUMBER:
+                return this.getSimpleNumberChart(chartTitle, chartDataSet);
+
+        }
+
+        return null;
+
+    }
+
+    private Node getPieChart(
             String chartTitle,
             Set<ChartData> chartDataSet
     ) {
@@ -49,7 +67,7 @@ public class CidesoDashboard {
 
     }
 
-    public Node getBarChart(
+    private Node getAdvancedBarChart(
             String chartTitle,
             Set<BarChartData> barChartDataSet
     ) {
@@ -61,19 +79,31 @@ public class CidesoDashboard {
 
     }
 
-    public Node getSimpleNumberChart(
+    private Node getSimpleBarChart(
             String chartTitle,
-            String value
+            Set<ChartData> chartDataSet
+    ) {
+
+        CidesoSimpleBarCidesoChart cidesoBarChart = new CidesoSimpleBarCidesoChart(
+                chartTitle,
+                chartDataSet);
+        return cidesoBarChart.getChart();
+
+    }
+
+    private Node getSimpleNumberChart(
+            String chartTitle,
+            Set<ChartData> chartDataSet
     ) {
 
         CidesoSimpleNumberChart cidesoSimpleNumberChart = new CidesoSimpleNumberChart(
                 chartTitle,
-                value);
+                chartDataSet);
         return cidesoSimpleNumberChart.getChart();
 
     }
 
-    public Node getGaugeChart(
+    private Node getGaugeChart(
             String chartTitle,
             String unit,
             int criticalEnd,
