@@ -1,4 +1,4 @@
-package ar.mil.cideso.model;
+package ar.mil.cideso.model.enums;
 
 public enum ChartTypeEnum {
 

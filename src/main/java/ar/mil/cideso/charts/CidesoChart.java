@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -34,16 +35,18 @@ public abstract class CidesoChart {
 
         // Card Title
         HBox titleBox = new HBox();
-        titleBox.setPadding(new Insets(12, 10, 12, 30));
-        titleBox.setStyle("-fx-background-color: #dcdbdb;");
         Text label = new Text();
         label.setText(cardTitle);
-        label.setFill(Color.color(0.5,0.5,0.6));
+        label.setFill(Color.color(0.5, 0.5, 0.6));
         label.setFont(Font.font(null, FontWeight.BOLD, 14));
+        titleBox.setPadding(new Insets(12, 10, 12, 30));
+        titleBox.setStyle("-fx-background-color: #dcdbdb;");
         titleBox.getChildren().add(label);
-
         mainCard.getChildren().add(titleBox);
+
+        VBox.setVgrow(content, Priority.ALWAYS);
         mainCard.getChildren().add(content);
+
         mainCard.setStyle("-fx-background-color: #f5efef;");
         mainCard.setEffect(new DropShadow(15, Color.GRAY));
 

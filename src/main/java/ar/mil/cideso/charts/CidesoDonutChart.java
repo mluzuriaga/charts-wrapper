@@ -1,5 +1,6 @@
 package ar.mil.cideso.charts;
 
+import ar.mil.cideso.charts.external.DoughnutChart;
 import ar.mil.cideso.model.ChartData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,11 +9,11 @@ import javafx.scene.chart.PieChart;
 
 import java.util.List;
 
-public class CidesoPieChart extends CidesoChart {
+public class CidesoDonutChart extends CidesoChart {
 
     private final List<ChartData> chartDataSet;
 
-    public CidesoPieChart(
+    public CidesoDonutChart(
             String chartTitle,
             List<ChartData> chartDataSet
     ) {
@@ -32,13 +33,11 @@ public class CidesoPieChart extends CidesoChart {
                             chartData.getDescription() + " (" + chartData.getValue() + ")",
                             chartData.getValue()));
 
-        PieChart pieChart = new PieChart(observableList);
-        pieChart.setLabelsVisible(false);
-        pieChart.setTitle(chartTitle);
+        DoughnutChart doughnutChart = new DoughnutChart(observableList);
 
         return wrapInCard(
                 chartTitle,
-                pieChart);
+                doughnutChart);
 
     }
 

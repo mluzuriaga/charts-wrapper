@@ -7,16 +7,15 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CidesoBarCidesoChart extends CidesoChart {
 
-    private final Set<BarChartData> barChartDataSet;
+    private final List<BarChartData> barChartDataSet;
 
     public CidesoBarCidesoChart(
             String chartTitle,
-            Set<BarChartData> barChartDataSet
+            List<BarChartData> barChartDataSet
     ) {
 
         super(chartTitle);
@@ -46,7 +45,7 @@ public class CidesoBarCidesoChart extends CidesoChart {
                             .stream()
                             .map(
                                     chartData -> new XYChart.Data<>(
-                                            chartData.getCategory(),
+                                            chartData.getDescription(),
                                             chartData.getValue()))
                             .collect(Collectors.toList());
                     serie.getData().addAll(dataSet);
