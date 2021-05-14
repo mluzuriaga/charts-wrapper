@@ -1,10 +1,7 @@
 package ar.mil.cideso.model;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
 public class BarChartData {
 
     private final String serieName;
@@ -17,6 +14,14 @@ public class BarChartData {
         this.serieName = serieName;
         this.serieData = serieData;
 
+    }
+
+    public String getSerieName() {
+        return serieName;
+    }
+
+    public List<ChartData> getSerieData() {
+        return serieData;
     }
 
 }

@@ -1,8 +1,5 @@
 package ar.mil.cideso.model;
 
-import lombok.Data;
-
-@Data
 public class ChartData {
 
     private final Integer value;
@@ -15,6 +12,14 @@ public class ChartData {
         this.value = value;
         this.description = description;
 
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

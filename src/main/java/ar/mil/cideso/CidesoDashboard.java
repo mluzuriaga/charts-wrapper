@@ -12,16 +12,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Data
-@NoArgsConstructor
 public class CidesoDashboard {
 
     private static CidesoDashboard cidesoDashboardInstance;
@@ -32,6 +28,10 @@ public class CidesoDashboard {
             cidesoDashboardInstance = new CidesoDashboard();
 
         return cidesoDashboardInstance;
+
+    }
+
+    public CidesoDashboard() {
 
     }
 
