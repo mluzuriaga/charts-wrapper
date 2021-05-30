@@ -26,14 +26,19 @@ public class CidesoDonutChart extends CidesoChart {
     @Override
     public Node getChart() {
 
+        long total = 0;
+
         ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList();
-        for (ChartData chartData : chartDataSet)
+        for (ChartData chartData : chartDataSet) {
+            total += chartData.getValue();
             observableList.add(
                     new PieChart.Data(
                             chartData.getDescription() + " (" + chartData.getValue() + ")",
                             chartData.getValue()));
+        }
 
         DoughnutChart doughnutChart = new DoughnutChart(observableList);
+        doughnutChart.setTitle("Total: " + total);
 
         return wrapInCard(
                 chartTitle,

@@ -13,16 +13,19 @@ import javafx.scene.text.Text;
 
 public class CidesoSimpleStringChart extends CidesoChart {
 
+    private final String unit;
     private final String value;
     private final CidesoChartColor cidesoChartColor;
 
     public CidesoSimpleStringChart(
             String chartTitle,
             CidesoChartColor cidesoChartColor,
-            String value) {
+            String value,
+            String unit) {
 
         super(chartTitle);
 
+        this.unit = unit;
         this.value = value;
         this.cidesoChartColor = cidesoChartColor;
 
@@ -57,7 +60,7 @@ public class CidesoSimpleStringChart extends CidesoChart {
         Text footerText = new Text();
         footerText.setStroke(null);
         footerText.setFill(Color.GRAY);
-        footerText.setText(this.chartTitle);
+        footerText.setText(this.unit);
         footerText.setFont(Font.font("Verdana", 14));
         cardFooter.setMaxHeight(30);
         cardFooter.setFillHeight(true);

@@ -7,49 +7,42 @@ import javafx.scene.paint.Color;
 
 public class CidesoGaugeChart extends CidesoChart {
 
-    private final String unit;
-    private final int criticalEnd;
-    private final int normalStart;
-    private final int normalEnd;
-    private final int optimalStart;
-    private final Double value;
+    private final Integer alta;
+    private final Integer baja;
 
     public CidesoGaugeChart(
             String chartTitle,
-            String unit,
-            int criticalEnd,
-            int normalStart,
-            int normalEnd,
-            int optimalStart,
-            Double value
+            Integer alta,
+            Integer baja
     ) {
 
         super(chartTitle);
 
-        this.unit = unit;
-        this.criticalEnd = criticalEnd;
-        this.normalStart = normalStart;
-        this.normalEnd = normalEnd;
-        this.optimalStart = optimalStart;
-        this.value = value;
+        this.alta = alta;
+        this.baja = baja;
 
     }
 
     @Override
     public Node getChart() {
 
+        long total = this.alta + this.baja;
+        long value = (this.alta * 100) / total;
+
         SimpleSectionGauge gaugeChart = new SimpleSectionGauge(
                 chartTitle,
-                unit,
+                "%",
                 0,
                 100,
                 Color.rgb(69, 106, 207),
                 Color.rgb(150, 150, 150, 0.25),
                 true,
-                new Section(optimalStart, 100, Color.rgb(69, 207, 109)),
-                new Section(normalStart, normalEnd, Color.rgb(239, 215, 80)),
-                new Section(0, criticalEnd, Color.rgb(239, 96, 80)));
+                new Section(0, value - 1, Color.rgb(69, 207, 109)),
+                //new Section(normalStart, normalEnd, Color.rgb(239, 215, 80)),
+                new Section(value + 1, 100, Color.rgb(239, 96, 80)));
+
         gaugeChart.setValue(value);
+        gaugeChart.setTitle("Total: " + total);
 
         return wrapInCard(
                 chartTitle,

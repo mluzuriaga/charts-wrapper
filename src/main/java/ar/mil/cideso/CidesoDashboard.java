@@ -1,8 +1,8 @@
 package ar.mil.cideso;
 
 import ar.mil.cideso.charts.*;
-import ar.mil.cideso.model.BarChartData;
 import ar.mil.cideso.model.ChartData;
+import ar.mil.cideso.model.dto.EfectivosData;
 import ar.mil.cideso.model.enums.CidesoChartColor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,14 +14,22 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Singleton para interactuar con el panel de dashboar
+ */
 public class CidesoDashboard {
 
+    private final CidesoDataChartBuilder cidesoDataChartBuilder;
     private static CidesoDashboard cidesoDashboardInstance;
 
+    /**
+     * Obtiene la instancia del dashboard
+     *
+     * @return - CidesoDashboard
+     */
     public static CidesoDashboard getInstance() {
 
         if (Objects.isNull(cidesoDashboardInstance))
@@ -32,15 +40,80 @@ public class CidesoDashboard {
     }
 
     public CidesoDashboard() {
+        this.cidesoDataChartBuilder = new CidesoDataChartBuilder();
+    }
+
+    /**
+     * Grafico de barras para efectivos
+     *
+     * @param efectivosAlta - efectivos dados de alta
+     * @param efectivosBaja - efectivos dados de baja
+     * @return - nodo FX
+     */
+    public Node getEfectivosChart(
+            EfectivosData efectivosAlta,
+            EfectivosData efectivosBaja
+    ) {
+
+        return new CidesoBarCidesoChart(
+                "Efectivos",
+                this.cidesoDataChartBuilder.getEfectivosData(
+                        efectivosAlta,
+                        efectivosBaja))
+                .getChart();
 
     }
 
     /**
-     * Grafico de torta
+     * Grafico de anillo para 2 valores (alta/baja)
      *
-     * @param chartTitle - titulo del grafico de torta
-     * @param dataSet    - datos para graficar. Cada ChartData recibe el valor, y que representa el valor
-     * @return -
+     * @param chartTitle - titulo del grafico
+     * @param alta       - elementos disponible o dada de alta
+     * @param baja       - elementos faltante o dada de baja
+     * @return - node FX
+     */
+    public Node getDonutChart(
+            String chartTitle,
+            Integer alta,
+            Integer baja) {
+
+        return new CidesoDonutChart(
+                chartTitle,
+                this.cidesoDataChartBuilder.getChartListData(
+                        alta,
+                        baja
+                ))
+                .getChart();
+
+    }
+
+    /**
+     * Grafico de aguja
+     *
+     * @param chartTitle - titulo del grafico
+     * @param alta       - elementos disponibles o dados de alta
+     * @param baja       - elementos faltantes o dados de baja
+     * @return - nodo FX
+     */
+    public Node getGaugeChart(
+            String chartTitle,
+            Integer alta,
+            Integer baja
+    ) {
+
+        return new CidesoGaugeChart(
+                chartTitle,
+                alta,
+                baja).getChart();
+
+    }
+
+    /**
+     * Crea un grafico de torta
+     *
+     * @param chartTitle - titulo de la card sobre la que se insertara el grafico
+     * @param dataSet    - datos para graficar. Cada par es valor numerico, y descripcion del valor
+     * @return - nodo FX
      */
     public Node getPieChart(
             String chartTitle,
@@ -54,78 +127,24 @@ public class CidesoDashboard {
     }
 
     /**
-     * Grafico de anillo
-     *
-     * @param chartTitle - titulo del grafico de anillo
-     * @param dataSet    - datos para graficar. Cada ChartData recibe el valor, y que representa el valor
-     * @return -
-     */
-    public Node getDonutChart(
-            String chartTitle,
-            List<ChartData> dataSet) {
-
-        return new CidesoDonutChart(
-                chartTitle,
-                dataSet).getChart();
-
-    }
-
-    /**
-     * Grafico de barras
-     *
-     * @param chartTitle      - titulo del grafico de barras
-     * @param barChartDataSet - se reciben las series de barras a mostrar. La serie tiene un nombre y una lista de ChartData
-     * @return -
-     */
-    public Node getBarChart(
-            String chartTitle,
-            List<BarChartData> barChartDataSet
-    ) {
-
-        return new CidesoBarCidesoChart(
-                chartTitle,
-                barChartDataSet).getChart();
-
-    }
-
-    /**
      * Grafico para mostrar solo un numero o texto
      *
      * @param chartTitle - titulo del grafico
      * @param value      - valor
+     * @param unit       - unidad del valor representado
      * @return -
      */
     public Node getSimpleStringChart(
             String chartTitle,
-            String value) {
+            String value,
+            String unit) {
 
         CidesoSimpleStringChart cidesoSimpleStringChart = new CidesoSimpleStringChart(
                 chartTitle,
                 CidesoChartColor.DEFAULT,
-                value);
+                value,
+                unit);
         return cidesoSimpleStringChart.getChart();
-
-    }
-
-    private Node getGaugeChart(
-            String chartTitle,
-            String unit,
-            int criticalEnd,
-            int normalStart,
-            int normalEnd,
-            int optimalStart,
-            Double value
-    ) {
-
-        CidesoGaugeChart cidesoGaugeChart = new CidesoGaugeChart(
-                chartTitle,
-                unit,
-                criticalEnd,
-                normalStart,
-                normalEnd,
-                optimalStart,
-                value);
-        return cidesoGaugeChart.getChart();
 
     }
 
@@ -164,17 +183,14 @@ public class CidesoDashboard {
         tp.setAlignment(Pos.TOP_LEFT);
         tp.setPadding(new Insets(20, 20, 20, 20));
         tp.setStyle("-fx-background-color: #dbd8d8;");
+
         scrollPane.setContent(tp);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
 
         rootPane.getChildren().add(scrollPane);
 
         rootPane.setAlignment(Pos.CENTER);
-        rootPane.setFillWidth(false);
-
-        rootPane.widthProperty().addListener(
-                (o, oldValue, newValue) ->
-                        tp.setPrefColumns(Math.min(tp.getChildren().size(),
-                                Math.max(1, (int) (newValue.doubleValue() / tp.getPrefTileWidth())))));
 
         tiles.forEach(
                 (tile) ->
@@ -191,8 +207,8 @@ public class CidesoDashboard {
      * @param title      - titulo del dashboard
      * @param widthSize  - ancho
      * @param heightSize - alto
-     * @param data       - datos recibidos y usados en el orden en que se mandaron en la foto
-     * @return -
+     * @param data       - lista de datos numericos (Orden prefijado: ver README.md)
+     * @return - stage FX
      */
     public Stage getCompleteDashboardPane(
             String title,
@@ -214,123 +230,76 @@ public class CidesoDashboard {
         List<Node> tiles = new ArrayList<>();
 
         // EFECTIVOS
-        List<BarChartData> barChartData = new ArrayList<>();
-        BarChartData oficialSuperior = new BarChartData(
-                "Oficial Superior",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(0), "Alta"),
-                                new ChartData(data.get(1), "Baja")
-                        )));
-        barChartData.add(oficialSuperior);
+        EfectivosData efectivosAlta = new EfectivosData();
+        efectivosAlta.setOficialSuperior(data.get(0));
+        efectivosAlta.setOficialJefe(data.get(2));
+        efectivosAlta.setOficialSubalterno(data.get(4));
+        efectivosAlta.setSuboficialSuperior(data.get(6));
+        efectivosAlta.setSuboficialSubalterno(data.get(8));
+        efectivosAlta.setAgenteCivil(data.get(10));
+        efectivosAlta.setSoldadoVoluntario(data.get(12));
 
-        BarChartData oficialJefe = new BarChartData(
-                "Oficial Jefe",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(2), "Alta"),
-                                new ChartData(data.get(3), "Baja")
-                        )));
-        barChartData.add(oficialJefe);
+        EfectivosData efectivosBaja = new EfectivosData();
+        efectivosBaja.setOficialSuperior(data.get(1));
+        efectivosBaja.setOficialJefe(data.get(3));
+        efectivosBaja.setOficialSubalterno(data.get(5));
+        efectivosBaja.setSuboficialSuperior(data.get(7));
+        efectivosBaja.setSuboficialSubalterno(data.get(8));
+        efectivosBaja.setAgenteCivil(data.get(11));
+        efectivosBaja.setSoldadoVoluntario(data.get(13));
 
-        BarChartData oficialSubalterno = new BarChartData(
-                "Oficial Subalterno",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(4), "Alta"),
-                                new ChartData(data.get(5), "Baja")
-                        )));
-        barChartData.add(oficialSubalterno);
-
-        BarChartData suboficialSuperior = new BarChartData(
-                "SubOficial Superior",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(6), "Alta"),
-                                new ChartData(data.get(7), "Baja")
-                        )));
-        barChartData.add(suboficialSuperior);
-
-        BarChartData suboficialSubalterno = new BarChartData(
-                "SubOficial Subalterno",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(8), "Alta"),
-                                new ChartData(data.get(9), "Baja")
-                        )));
-        barChartData.add(suboficialSubalterno);
-
-        BarChartData soldadoVoluntario = new BarChartData(
-                "Soldado Voluntario",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(10), "Alta"),
-                                new ChartData(data.get(11), "Baja")
-                        )));
-        barChartData.add(soldadoVoluntario);
-
-        BarChartData agenteCivil = new BarChartData(
-                "Agente civil",
-                new ArrayList<>(
-                        Arrays.asList(
-                                new ChartData(data.get(12), "Alta"),
-                                new ChartData(data.get(13), "Baja")
-                        )));
-        barChartData.add(agenteCivil);
         tiles.add(
-                this.getBarChart(
-                        "Efectivos",
-                        barChartData));
-
+                this.getEfectivosChart(
+                        efectivosAlta,
+                        efectivosBaja));
 
         // ARMAMENTO
-        List<ChartData> armamentoPrincipalData = new ArrayList<>();
-        armamentoPrincipalData.add(new ChartData(data.get(14), "Alta"));
-        armamentoPrincipalData.add(new ChartData(data.get(15), "Baja"));
         tiles.add(
-                this.getDonutChart(
+                this.getGaugeChart(
                         "Armamento Principal",
-                        armamentoPrincipalData));
+                        14,
+                        15));
 
-        List<ChartData> armamentoSecundarioData = new ArrayList<>();
-        armamentoSecundarioData.add(new ChartData(data.get(16), "Alta"));
-        armamentoSecundarioData.add(new ChartData(data.get(17), "Baja"));
         tiles.add(
-                this.getDonutChart(
+                this.getGaugeChart(
                         "Armamento Secundario",
-                        armamentoSecundarioData));
+                        16,
+                        30));
 
 
         // MUNICION
-        List<ChartData> municionData = new ArrayList<>();
-        municionData.add(new ChartData(data.get(18), "Principal Alta"));
-        municionData.add(new ChartData(data.get(19), "Principal Baja"));
-        municionData.add(new ChartData(data.get(20), "Secundaria Alta"));
-        municionData.add(new ChartData(data.get(21), "Secundaria Baja"));
         tiles.add(
-                this.getPieChart(
-                        "Municion",
-                        municionData));
+                this.getDonutChart(
+                        "Munición Principal",
+                        18,
+                        19));
+
+        tiles.add(
+                this.getDonutChart(
+                        "Munición Secundaria",
+                        20,
+                        21));
 
 
         // VEHICULOS
         List<ChartData> vehiculosData = new ArrayList<>();
-        vehiculosData.add(new ChartData(data.get(22), "Combate Alta"));
-        vehiculosData.add(new ChartData(data.get(23), "Combate Baja"));
-        vehiculosData.add(new ChartData(data.get(24), "General Alta"));
-        vehiculosData.add(new ChartData(data.get(25), "General Baja"));
+        vehiculosData.add(new ChartData(data.get(22), "Combate Disponible"));
+        vehiculosData.add(new ChartData(data.get(23), "Combate Faltante"));
+        vehiculosData.add(new ChartData(data.get(24), "General Disponible"));
+        vehiculosData.add(new ChartData(data.get(25), "General Faltante"));
+
         tiles.add(
                 this.getPieChart(
-                        "Vehiculos",
+                        "Vehículos",
                         vehiculosData));
 
 
         // COMBUSTIBLE
         List<ChartData> combustibleData = new ArrayList<>();
-        combustibleData.add(new ChartData(data.get(26), "Nafta Alta"));
-        combustibleData.add(new ChartData(data.get(27), "Nafta Baja"));
-        combustibleData.add(new ChartData(data.get(28), "Diesel Alta"));
-        combustibleData.add(new ChartData(data.get(29), "Diesel Baja"));
+        combustibleData.add(new ChartData(data.get(26), "Nafta Disponible"));
+        combustibleData.add(new ChartData(data.get(27), "Nafta Faltante"));
+        combustibleData.add(new ChartData(data.get(28), "Diesel Disponible"));
+        combustibleData.add(new ChartData(data.get(29), "Diesel Faltante"));
         tiles.add(
                 this.getPieChart(
                         "Combustible",
@@ -341,19 +310,22 @@ public class CidesoDashboard {
         tiles.add(
                 this.getSimpleStringChart(
                         "Raciones",
-                        raciones.toString()));
+                        raciones.toString(),
+                        "unidades"));
 
         Integer agua = data.get(31);
         tiles.add(
                 this.getSimpleStringChart(
                         "Agua",
-                        agua.toString()));
+                        agua.toString(),
+                        "litros"));
 
         Integer radioAccion = data.get(32);
         tiles.add(
                 this.getSimpleStringChart(
                         "Radio Alcance",
-                        radioAccion.toString()));
+                        radioAccion.toString(),
+                        "metros"));
 
         return tiles;
 
