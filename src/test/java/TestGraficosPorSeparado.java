@@ -78,7 +78,7 @@ public class TestGraficosPorSeparado extends Application {
 
         // VEHICULOS
         Node vehiculos = CidesoDashboard.getInstance().getPieChart(
-                "Vehiculos",
+                "Vehículos",
                 this.getVehiculosData());
         tiles.add(vehiculos);
 

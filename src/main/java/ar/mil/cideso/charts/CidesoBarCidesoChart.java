@@ -7,6 +7,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -29,13 +30,14 @@ public class CidesoBarCidesoChart extends CidesoChart {
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
-        yAxis.setTickUnit(1);
 
         final javafx.scene.chart.StackedBarChart<String, Number> barChart = new javafx.scene.chart.StackedBarChart<>(
                 xAxis,
                 yAxis);
 
         AtomicLong total = new AtomicLong();
+        AtomicInteger max = new AtomicInteger();
+        AtomicInteger min = new AtomicInteger();
 
         barChartDataSet.forEach(
                 barChartData -> {
@@ -50,6 +52,10 @@ public class CidesoBarCidesoChart extends CidesoChart {
                             .map(
                                     chartData -> {
                                         Integer value = chartData.getValue();
+                                        if (value > max.get())
+                                            max.set(value);
+                                        if (value < min.get())
+                                            min.set(value);
                                         totalParcial.addAndGet(value);
                                         return new XYChart.Data<>(
                                                 chartData.getDescription(),
@@ -65,6 +71,11 @@ public class CidesoBarCidesoChart extends CidesoChart {
                 });
 
         barChart.setTitle("Total: " + total);
+
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(min.get());
+        yAxis.setUpperBound(max.get());
+        yAxis.setTickUnit(1);
 
         return wrapInCard(
                 chartTitle,

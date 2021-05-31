@@ -26,7 +26,7 @@ public class TestDashboardPredefinido extends Application {
 
         Random random = new Random();
         for (int i = 0; i < 33; i++)
-            data.add(Math.abs(random.nextInt() % 101));
+            data.add(Math.abs(random.nextInt() % 6));
 
         // DASHBOARD COMPLETO
         CidesoDashboard.getInstance().getCompleteDashboardPane(
