@@ -27,7 +27,9 @@ public class CidesoGaugeChart extends CidesoChart {
     public Node getChart() {
 
         long total = this.alta + this.baja;
-        long value = (this.alta * 100) / total;
+        long value = 0;
+        if (total != 0)
+            value = (this.alta * 100) / total;
 
         SimpleSectionGauge gaugeChart = new SimpleSectionGauge(
                 chartTitle,
